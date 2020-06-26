@@ -4,8 +4,8 @@ const Image = require('../models/Image');
 // Import Reddit Api Wrapper
 const rawjs = require('raw.js');
 const reddit = new rawjs('Reddit instance');
-
 const router = new express.Router();
+
 // Oauth2 Authentication to the RAW
 const {
   REDDIT_APP_ID,
