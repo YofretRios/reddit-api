@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+// Connect to the DB
+require('./db/mongoose');
 
 const rawRouter = require('./routers/raw');
 
