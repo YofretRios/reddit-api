@@ -1,6 +1,5 @@
 const express = require('express');
 const Post = require('../models/post');
-const Image = require('../models/Image');
 // Import Reddit Api Wrapper
 const rawjs = require('raw.js');
 const reddit = new rawjs('Reddit instance');
@@ -112,24 +111,6 @@ router.post('/dismiss', async (req, res) => {
     });
 
     res.status(201).send(post);
-  } catch (ex) {
-    res.status(400).send({ error: ex.message });
-  }
-});
-
-/**
- * Save selected URI image
- * @param  {Req} Request body { reddit_url: '' }
- */
-router.post('/image', async (req, res) => {
-  const image = new Image({
-    reddit_url: 'https://images.unsplash.com/photo-1494548162494-384bba4ab999?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80'
-  });
-
-  try {
-    await image.save();
-
-    res.status(201).send(image);
   } catch (ex) {
     res.status(400).send({ error: ex.message });
   }
