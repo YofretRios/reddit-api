@@ -17,28 +17,43 @@ reddit.setupOAuth2(REDDIT_APP_ID, REDDIT_SECRET, REDDIT_REDIRECT_URL);
 
 /**
  * Get Top Post based on Subreddit
- * @param  {[type]} '/top' [description]
- * @param  {[type]} (req,  res           [description]
- * @return {[type]}        [description]
  */
-router.get('/top', (req, res) => {
+router.get('/top', async (req, res) => {
   try {
-    const { query: { subreddit, count, after } } = req;
+    const { query: { subreddit, count, after, limit } } = req;
+    // Fetch Tracked post for V
+    const posts = await Post.find();
     // Call TOP api
     reddit.top({
-      limit: 15,
+      limit,
       r: subreddit,
       count: count || 0,
       after: after || null
     }, (err, response) => {
       if (!err) {
-        res.status(201).send(response);
+        // Map visited information
+        const data = {
+          ...response,
+          children: response.children.map((child) => {
+            let data = { ...child.data };
+            let track = posts.find((post) => post.reddit_id === child.data.id);
+
+            if (track) {
+              data.visited = track.visited;
+              data.dismissed = track.dismissed;
+            }
+
+            return { ...child, data };
+          })
+        };
+
+        res.status(201).send(data);
       } else {
         res.status(500).send({ error: err });
       }
     });
   } catch (ex) {
-    res.status(500).send(ex);
+    res.status(500).send({ error: ex });
   }
 });
 
@@ -46,22 +61,29 @@ router.get('/top', (req, res) => {
  * Mark Post As Read
  * @param  {Req} Request body
  * {
- *   reddi_id: '',
+ *   reddit_id: '',
  *   visited: true
  * }
  */
 router.post('/markAsRead', async (req, res) => {
-  const post = new Post({
-    reddit_id: 'test_id',
+  const { body } = req;
+
+  const filter = { reddit_id: body.reddit_id };
+  const update = {
+    ...body,
     visited: true
-  });
+  };
 
   try {
-    await post.save();
+    // Upsert action, if ID is already been tracked, them just update the value
+    const post = await Post.findOneAndUpdate(filter, update, {
+      new: true,
+      upsert: true
+    });
 
     res.status(201).send(post);
-  } catch (e) {
-    res.status(400).send();
+  } catch (ex) {
+    res.status(400).send({ error: ex.message });
   }
 });
 
@@ -74,17 +96,24 @@ router.post('/markAsRead', async (req, res) => {
  * }
  */
 router.post('/dismiss', async (req, res) => {
-  const post = new Post({
-    reddit_id: 'test_id',
+  const { body } = req;
+
+  const filter = { reddit_id: body.reddit_id };
+  const update = {
+    ...body,
     dismissed: true
-  });
+  };
 
   try {
-    await post.save();
+    // Upsert action, if ID is already been tracked, them just update the value
+    const post = await Post.findOneAndUpdate(filter, update, {
+      new: true,
+      upsert: true
+    });
 
     res.status(201).send(post);
-  } catch (e) {
-    res.status(400).send();
+  } catch (ex) {
+    res.status(400).send({ error: ex.message });
   }
 });
 
@@ -101,8 +130,8 @@ router.post('/image', async (req, res) => {
     await image.save();
 
     res.status(201).send(image);
-  } catch (e) {
-    res.status(400).send();
+  } catch (ex) {
+    res.status(400).send({ error: ex.message });
   }
 });
 
