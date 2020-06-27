@@ -48,19 +48,16 @@ docker-compose up -d
 this requires docker to be installed, this setup optional thought, you can always chose to install a mongodb directly, skiping this setup.
 
 ## Env variables
-Create a `.env` file in the root folder with the following content, there is a `.env.example` included which have some of the reddit api values from my personal account
+Create a `.env` file in the root folder with the following content, there is a `.env.example` included which have some of the reddit api values from my personal account, bear in mind that a database URL connection is required.
 
 ```
-DATABASE_HOST=
-DATABASE_PORT=
-DATABASE_USERNAME=
-DATABASE_PASSWORD=
-DATABASE_URL=
-DATABASE_NAME=
+DATABASE_URL=mongodb://root:example@127.0.0.1:27017
+DATABASE_NAME=reddit
 
-REDDIT_APP_ID=
-REDDIT_SECRET=
-REDDIT_REDIRECT_URL=
+REDDIT_APP_ID=jN_v-vI9HqO0cQ
+REDDIT_SECRET=jn_hZG1Yu935UTaJf5vvBIiMxOY
+REDDIT_REDIRECT_URL=https://www.reddit.com/
+
 ```
 
 ## Leverage
