@@ -39,7 +39,7 @@ router.post('/image', async (req, res) => {
 });
 
 /**
- * Save selected URI image
+ * Delete Image by ID
  * @param  {Req} Request body { id: '' }
  */
 router.delete('/image', async (req, res) => {
