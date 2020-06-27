@@ -70,7 +70,8 @@ router.post('/markAsRead', async (req, res) => {
   const filter = { reddit_id: body.reddit_id };
   const update = {
     ...body,
-    visited: true
+    visited: true,
+    dismissed: false
   };
 
   try {
@@ -111,6 +112,36 @@ router.post('/dismiss', async (req, res) => {
     });
 
     res.status(201).send(post);
+  } catch (ex) {
+    res.status(400).send({ error: ex.message });
+  }
+});
+
+/**
+ * Mark all Post As Dismissed
+ * @param  {Req} Request body
+ * { ids: [] }
+ */
+router.post('/dismissAll', async (req, res) => {
+  try {
+    const { body } = req;
+
+    let promises = body.ids.map(async (id) => {
+      const filter = { reddit_id: id };
+      const update = {
+        reddit_id: id,
+        dismissed: true
+      };
+
+      return await Post.findOneAndUpdate(filter, update, {
+        new: true,
+        upsert: true
+      });
+    });
+
+    const responses = await Promise.all(promises);
+
+    res.status(201).send(responses);
   } catch (ex) {
     res.status(400).send({ error: ex.message });
   }

@@ -46,7 +46,7 @@ router.delete('/image', async (req, res) => {
   try {
     const { body } = req;
 
-    const image = await Image.deleteOne({ id: body.id });
+    const image = await Image.findByIdAndRemove(body.id);
 
     res.status(201).send(image);
   } catch (ex) {
