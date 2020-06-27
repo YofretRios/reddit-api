@@ -47,6 +47,22 @@ docker-compose up -d
 
 this requires docker to be installed, this setup optional thought, you can always chose to install a mongodb directly, skiping this setup.
 
+## Env variables
+Create a `.env` file in the root folder with the following content, there is a `.env.example` included which have some of the reddit api values from my personal account
+
+```
+DATABASE_HOST=
+DATABASE_PORT=
+DATABASE_USERNAME=
+DATABASE_PASSWORD=
+DATABASE_URL=
+DATABASE_NAME=
+
+REDDIT_APP_ID=
+REDDIT_SECRET=
+REDDIT_REDIRECT_URL=
+```
+
 ## Leverage
 For this project I've used the following libraries to solve common problems
 - cors ^2.8.5
